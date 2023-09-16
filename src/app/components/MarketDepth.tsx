@@ -19,6 +19,12 @@ const sellData = [
 
 const NORMALIZATION_PERCENT = 5;
 
+const getHighestTotal = () => {
+  const buyMax = Math.max(...buyData.map((order) => order.total));
+  const sellMax = Math.max(...sellData.map((order) => order.total));
+  return Math.max(buyMax, sellMax);
+};
+
 const normalizeData = (data, normalizationValue) => {
   return data.map((order) => {
     const normalizedTotal = (order.total / normalizationValue) * 100;
@@ -30,7 +36,7 @@ const normalizeData = (data, normalizationValue) => {
 };
 
 export const MarketDepthChart = () => {
-  const normalizationValue = buyData[0].maxTotal;
+  const normalizationValue = getHighestTotal();
   const normalizedBuyData = normalizeData(
     buyData,
     normalizationValue
@@ -41,7 +47,7 @@ export const MarketDepthChart = () => {
   ).reverse();
 
   return (
-    <div className="flex h-[150px]">
+    <div className="flex h-[150px] my-4">
       {normalizedBuyData.map((order, index) => {
         const leftHeight =
           index > 0 ? normalizedBuyData[index - 1].normalizedTotal : 0;
@@ -56,7 +62,7 @@ export const MarketDepthChart = () => {
               style={{ height: `${order.normalizedTotal}%` }}
               className="absolute bottom-0 w-full border-t-2 border-green-500"
             ></div>
-            {order.normalizedTotal > leftHeight && (
+            {index !== 0 && order.normalizedTotal > leftHeight && (
               <div
                 style={{
                   height: `${order.normalizedTotal - leftHeight}%`,
@@ -77,7 +83,9 @@ export const MarketDepthChart = () => {
           </div>
         );
       })}
-      <div className="flex-2 text-center font-bold flex items-center justify-center">
+      <div className="flex-1 text-center font-bold flex items-center justify-center relative">
+        <div className="absolute bottom-0 left-0 w-1/2 border-b-2 border-green-500"></div>
+        <div className="absolute bottom-0 right-0 w-1/2 border-b-2 border-red-500"></div>
         0.15
       </div>
       {normalizedSellData.map((order, index) => {
@@ -103,15 +111,16 @@ export const MarketDepthChart = () => {
                 className="absolute left-0 w-px bg-red-500"
               ></div>
             )}
-            {order.normalizedTotal > rightHeight && (
-              <div
-                style={{
-                  height: `${order.normalizedTotal - rightHeight}%`,
-                  bottom: `${rightHeight}%`,
-                }}
-                className="absolute right-0 w-px bg-red-500"
-              ></div>
-            )}
+            {index !== normalizedSellData.length - 1 &&
+              order.normalizedTotal > rightHeight && (
+                <div
+                  style={{
+                    height: `${order.normalizedTotal - rightHeight}%`,
+                    bottom: `${rightHeight}%`,
+                  }}
+                  className="absolute right-0 w-px bg-red-500"
+                ></div>
+              )}
           </div>
         );
       })}
