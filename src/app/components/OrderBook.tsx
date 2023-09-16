@@ -3,6 +3,7 @@ import "../styles/orderbook.css";
 import * as utils from "../utils";
 import { OrderBookRowProps } from "../redux/orderBookSlice";
 import { useAppSelector } from "../hooks";
+import { MarketDepthChart } from "./MarketDepth";
 
 function OrderBookRow(props: OrderBookRowProps) {
   const { barColor, orderCount, price, size, total, maxTotal } = props;
@@ -109,36 +110,39 @@ export function OrderBook() {
   const buys = useAppSelector((state) => state.orderBook.buys);
 
   return (
-    <div className="p-2 text-sx">
-      <div className="sized-columns max-w-sm">
-        <div className="">
-          Order
-          <br />
-          Count
-        </div>
-        <div className="text-end">
-          Price
-          <br />({token2Symbol})
-        </div>
-        <div className="text-end">
-          Size
-          <br />({token1Symbol})
-        </div>
-        <div className="text-end">
-          Total
-          <br />({token1Symbol})
-        </div>
+    <>
+      <MarketDepthChart />
+      <div className="p-2 text-sx">
+        <div className="sized-columns max-w-sm">
+          <div className="">
+            Order
+            <br />
+            Count
+          </div>
+          <div className="text-end">
+            Price
+            <br />({token2Symbol})
+          </div>
+          <div className="text-end">
+            Size
+            <br />({token1Symbol})
+          </div>
+          <div className="text-end">
+            Total
+            <br />({token1Symbol})
+          </div>
 
-        {sells.map((props, index) => (
-          <OrderBookRow key={"sell-" + index} {...props} />
-        ))}
+          {sells.map((props, index) => (
+            <OrderBookRow key={"sell-" + index} {...props} />
+          ))}
 
-        <MiddleRows />
+          <MiddleRows />
 
-        {buys.map((props, index) => (
-          <OrderBookRow key={"buy-" + index} {...props} />
-        ))}
+          {buys.map((props, index) => (
+            <OrderBookRow key={"buy-" + index} {...props} />
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
